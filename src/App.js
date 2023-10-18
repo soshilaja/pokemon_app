@@ -1,15 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import AboutPage from "./pages/AboutPage";
 import "./App.css";
 
 const App = () => {
-  
+  const [pokemonData, setPokemonData] = useState("");
+  const [pokemonName, setPokemonName] = useState("");
+  const [error, setError] = useState(false);
+
+  const fetchPokemonData = async (e) => {
+    e.preventDefault();
+
+    if (!pokemonName) {
+      return;
+    }
+    try {
+      const response = await fetch(
+        `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
+      );
+      const data = await response.json();
+      setPokemonData(data);
+      // console.log(data);
+      //reset the input field
+      setPokemonName("");
+      setError(false);
+    } catch (error) {
+      console.error(error);
+      setError(true);
+    }
+  };
 
   return (
-    <Router>
-      <>
+    <>
+      <Router>
         <nav>
           <ul>
             <li>
@@ -21,11 +45,24 @@ const App = () => {
           </ul>
         </nav>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={
+              <Home
+                pokemonData={pokemonData}
+                pokemonName={pokemonName}
+                error={error}
+                fetchPokemonData={fetchPokemonData}
+                onPokemonNameChange={(e) =>
+                  setPokemonName(e.target.value.toLowerCase())
+                }
+              />
+            }
+          />
           <Route path="/about-pokemon-app" element={<AboutPage />} />
         </Routes>
-      </>
-    </Router>
+      </Router>
+    </>
   );
 };
 export default App;

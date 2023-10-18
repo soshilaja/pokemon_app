@@ -1,31 +1,13 @@
 import React from "react";
-import { useState } from "react";
 
-const Home = () => {
-  const [pokemonName, setPokemonName] = useState("");
-  const [pokemonData, setPokemonData] = useState("");
-  const [error, setError] = useState(false);
-
-  const fetchPokemonData = async (e) => {
-    e.preventDefault();
-    if (!pokemonName) {
-      return;
-    }
-    try {
-      const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
-      );
-      const data = await response.json();
-      setPokemonData(data);
-      // console.log(data);
-      //reset the input field
-      setPokemonName("");
-      setError(false);
-    } catch (error) {
-      console.error(error);
-      setError(true);
-    }
-  };
+const Home = ({
+  pokemonData,
+  pokemonName,
+  error,
+  fetchPokemonData,
+  onPokemonNameChange,
+}) => {
+  
   return (
     <>
       <div className="display">
@@ -146,17 +128,18 @@ const Home = () => {
               : "Please enter a pokemon name or number"}
           </b>
         </span>
-        <br />
-        <form onSubmit={fetchPokemonData}>
-          <input
-            name="pokemonName"
-            type="text"
-            placeholder="pokemon name"
-            value={pokemonName.toLowerCase()}
-            onChange={(e) => setPokemonName(e.target.value.toLowerCase())}
-          />
-          <button type="submit">Get Pokemon Data</button>
-        </form>
+        <div>
+          <form onSubmit={fetchPokemonData}>
+            <input
+              name="pokemonName"
+              type="text"
+              placeholder="pokemon name"
+              value={pokemonName}
+              onChange={onPokemonNameChange}
+            />
+            <button type="submit">Get Pokemon Data</button>
+          </form>
+        </div>
       </div>
     </>
   );
